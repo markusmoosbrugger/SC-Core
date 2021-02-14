@@ -7,8 +7,8 @@ import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
 
 /**
- * Interface for the class used to maintain the information that the EE has on the scheduling of its
- * tasks.
+ * Interface for the class used to maintain the information that the EE has on
+ * the scheduling of its tasks.
  * 
  * @author Fedor Smirnov
  */
@@ -23,7 +23,7 @@ public class ScheduleModel {
    * @param functionTask the requested task
    * @return true if the task is already scheduled
    */
-  public boolean isScheduled(Task functionTask) {
+  public boolean isScheduled(final Task functionTask) {
     return scheduleMap.containsKey(functionTask);
   }
 
@@ -33,7 +33,7 @@ public class ScheduleModel {
    * @param task
    * @param schedule
    */
-  public void setTaskSchedule(Task task, Set<Mapping<Task, Resource>> schedule) {
+  public void setTaskSchedule(final Task task, final Set<Mapping<Task, Resource>> schedule) {
     scheduleMap.put(task, schedule);
   }
 
@@ -43,7 +43,7 @@ public class ScheduleModel {
    * @param task the requested task
    * @return the task schedule, in the form of (annotated) mapping edges
    */
-  public Set<Mapping<Task, Resource>> getTaskSchedule(Task task) {
+  public Set<Mapping<Task, Resource>> getTaskSchedule(final Task task) {
     if (!isScheduled(task)) {
       throw new IllegalArgumentException(
           "Request for the schedule of unscheduled task " + task.getId());

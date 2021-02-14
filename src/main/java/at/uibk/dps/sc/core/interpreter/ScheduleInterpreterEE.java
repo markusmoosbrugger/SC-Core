@@ -6,7 +6,7 @@ import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.dataflow.Aggregation;
 import at.uibk.dps.ee.enactables.local.dataflow.Distribution;
 import at.uibk.dps.ee.enactables.local.dataflow.EarliestArrival;
-import at.uibk.dps.ee.enactables.local.utility.CollOperEnactable;
+import at.uibk.dps.ee.enactables.local.utility.CollOperFunction;
 import at.uibk.dps.ee.enactables.local.utility.ConditionEvaluation;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
@@ -80,7 +80,7 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
     if (utilType.equals(UtilityType.Condition)) {
       return new ConditionEvaluation(task);
     } else if (utilType.equals(UtilityType.CollectionOperation)) {
-      return new CollOperEnactable(task);
+      return new CollOperFunction(task);
     } else {
       throw new IllegalArgumentException("Unknown utility type: " + utilType.name());
     }
