@@ -86,7 +86,8 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
     } catch (IllegalArgumentException exc) {
       throw new IllegalStateException(
           "The task " + task.getId() + " is annotated with a type which cannot be run locally: "
-              + PropertyServiceFunctionUser.getFunctionTypeString(task));
+              + PropertyServiceFunctionUser.getFunctionTypeString(task),
+          exc);
     }
   }
 
