@@ -45,3 +45,9 @@ dependencies {
   // dependency to local files
   // compile files('libs/lib.jar')
 }
+
+jacocoTestReport {
+  reports {
+      xml.enabled true
+  }
+}
