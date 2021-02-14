@@ -17,19 +17,25 @@ import net.sf.opendse.model.Task;
  */
 public class ScheduleInterpreterUserSingle extends ScheduleInterpreterUser {
 
+  /**
+   * Injection constructor.
+   * 
+   * @param localFunctionFactory the factory used for the creation of
+   *        {@link EnactmentFunction} used for the local calculation.
+   */
   @Inject
-  public ScheduleInterpreterUserSingle(LocalFunctionFactory localFunctionFactory) {
+  public ScheduleInterpreterUserSingle(final LocalFunctionFactory localFunctionFactory) {
     super(localFunctionFactory);
   }
 
   @Override
-  protected EnactmentFunction interpretScheduleUser(Task task,
-      Set<Mapping<Task, Resource>> scheduleModel) {
+  protected EnactmentFunction interpretScheduleUser(final Task task,
+      final Set<Mapping<Task, Resource>> scheduleModel) {
     return getFunctionForMapping(scheduleModel.iterator().next());
   }
 
   @Override
-  protected void checkSchedule(Task task, Set<Mapping<Task, Resource>> scheduleModel) {
+  protected void checkSchedule(final Task task, final Set<Mapping<Task, Resource>> scheduleModel) {
     super.checkSchedule(task, scheduleModel);
     if (scheduleModel.size() != 1) {
       throw new IllegalArgumentException(

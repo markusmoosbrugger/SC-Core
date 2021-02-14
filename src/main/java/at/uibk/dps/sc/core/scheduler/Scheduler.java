@@ -13,7 +13,8 @@ import net.sf.opendse.model.Task;
 public interface Scheduler {
 
   /**
-   * Schedules the given function node. Returns a set of (annotated) mapping edges defining the task schedule.
+   * Schedules the given function node. Returns a set of (annotated) mapping edges
+   * defining the task schedule.
    * 
    * @param task the function node to schedule
    * @return a set of (annotated) mapping edges defining the task schedule

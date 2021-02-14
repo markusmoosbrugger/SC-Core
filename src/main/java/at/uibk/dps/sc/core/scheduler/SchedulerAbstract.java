@@ -18,13 +18,18 @@ public abstract class SchedulerAbstract implements Scheduler {
 
   protected final EnactmentSpecification specification;
 
+  /**
+   * Default constructor
+   * 
+   * @param specProvider specification provider
+   */
   public SchedulerAbstract(final SpecificationProvider specProvider) {
     this.specification = specProvider.getSpecification();
   }
 
   @Override
   public Set<Mapping<Task, Resource>> scheduleTask(final Task task) {
-    Mappings<Task, Resource> mappings = specification.getMappings();
+    final Mappings<Task, Resource> mappings = specification.getMappings();
     return chooseMappingSubset(task, mappings.get(task));
   }
 

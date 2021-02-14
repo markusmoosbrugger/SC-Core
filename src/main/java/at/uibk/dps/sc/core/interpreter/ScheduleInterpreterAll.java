@@ -10,31 +10,42 @@ import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
 
 /**
- * The {@link ScheduleInterpreterAll} is the interpreter receiving all tasks which are to be scheduled.
+ * The {@link ScheduleInterpreterAll} is the interpreter receiving all tasks
+ * which are to be scheduled.
  * 
  * @author Fedor Smirnov
  *
  */
-public class ScheduleInterpreterAll implements ScheduleInterpreter{
+public class ScheduleInterpreterAll implements ScheduleInterpreter {
 
-	protected final ScheduleInterpreterEE interpreterEE;
-	protected final ScheduleInterpreterUser interpreterUser;
-	
-	@Inject
-	public ScheduleInterpreterAll(ScheduleInterpreterEE interpreterEE, ScheduleInterpreterUser interpreterUser) {
-		this.interpreterEE = interpreterEE;
-		this.interpreterUser = interpreterUser;
-	}
+  protected final ScheduleInterpreterEE interpreterEE;
+  protected final ScheduleInterpreterUser interpreterUser;
 
-	@Override
-	public EnactmentFunction interpretSchedule(Task task, Set<Mapping<Task, Resource>> scheduleModel) {
-		UsageType usage = PropertyServiceFunction.getUsageType(task);
-		if(usage.equals(UsageType.User)) {
-			return interpreterUser.interpretSchedule(task, scheduleModel);
-		}else if (usage.equals(UsageType.DataFlow) || usage.equals(UsageType.Utility)) {
-			return interpreterEE.interpretSchedule(task, scheduleModel);
-		}else {
-			throw new IllegalArgumentException("Unknown usage type " + usage.name());
-		}
-	}
+  /**
+   * Injection constructor.
+   * 
+   * @param interpreterEE the interpreter for the functions required for EE
+   *        functionalities
+   * @param interpreterUser the interpreter for the functions calculating user
+   *        functions
+   */
+  @Inject
+  public ScheduleInterpreterAll(final ScheduleInterpreterEE interpreterEE,
+      final ScheduleInterpreterUser interpreterUser) {
+    this.interpreterEE = interpreterEE;
+    this.interpreterUser = interpreterUser;
+  }
+
+  @Override
+  public EnactmentFunction interpretSchedule(final Task task,
+      final Set<Mapping<Task, Resource>> scheduleModel) {
+    final UsageType usage = PropertyServiceFunction.getUsageType(task);
+    if (usage.equals(UsageType.User)) {
+      return interpreterUser.interpretSchedule(task, scheduleModel);
+    } else if (usage.equals(UsageType.DataFlow) || usage.equals(UsageType.Utility)) {
+      return interpreterEE.interpretSchedule(task, scheduleModel);
+    } else {
+      throw new IllegalArgumentException("Unknown usage type " + usage.name());
+    }
+  }
 }

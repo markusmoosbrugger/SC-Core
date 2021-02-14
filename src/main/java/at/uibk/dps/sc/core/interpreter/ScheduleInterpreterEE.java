@@ -21,8 +21,8 @@ import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
 
 /**
- * The {@link ScheduleInterpreterEE} provides the schedules for the tasks representing the internal
- * operations of the EE.
+ * The {@link ScheduleInterpreterEE} provides the schedules for the tasks
+ * representing the internal operations of the EE.
  * 
  * @author Fedor Smirnov
  *
@@ -30,12 +30,12 @@ import net.sf.opendse.model.Task;
 public class ScheduleInterpreterEE implements ScheduleInterpreter {
 
   @Override
-  public EnactmentFunction interpretSchedule(Task task,
-      Set<Mapping<Task, Resource>> scheduleModel) {
+  public EnactmentFunction interpretSchedule(final Task task,
+      final Set<Mapping<Task, Resource>> scheduleModel) {
     if (!scheduleModel.isEmpty()) {
       throw new IllegalArgumentException("EE tasks should not be annotated with mappings.");
     }
-    UsageType usage = PropertyServiceFunction.getUsageType(task);
+    final UsageType usage = PropertyServiceFunction.getUsageType(task);
     if (usage.equals(UsageType.DataFlow)) {
       return getDataFlowFunction(task);
     } else if (usage.equals(UsageType.Utility)) {
@@ -51,12 +51,12 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
    * @param task the given task.
    * @return the data flow function for the given task
    */
-  protected EnactmentFunction getDataFlowFunction(Task task) {
-    DataFlowType dfType = PropertyServiceFunctionDataFlow.getDataFlowType(task);
+  protected EnactmentFunction getDataFlowFunction(final Task task) {
+    final DataFlowType dfType = PropertyServiceFunctionDataFlow.getDataFlowType(task);
     if (dfType.equals(DataFlowType.EarliestInput)) {
       return new EarliestArrival();
     } else if (dfType.equals(DataFlowType.Collections)) {
-      OperationType oType = PropertyServiceFunctionDataFlowCollections.getOperationType(task);
+      final OperationType oType = PropertyServiceFunctionDataFlowCollections.getOperationType(task);
       if (oType.equals(OperationType.Aggregation)) {
         return new Aggregation();
       } else if (oType.equals(OperationType.Distribution)) {
@@ -75,8 +75,8 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
    * @param task the given task.
    * @return the utility function for the given task
    */
-  protected EnactmentFunction getUtilityFunction(Task task) {
-    UtilityType utilType = PropertyServiceFunctionUtility.getUtilityType(task);
+  protected EnactmentFunction getUtilityFunction(final Task task) {
+    final UtilityType utilType = PropertyServiceFunctionUtility.getUtilityType(task);
     if (utilType.equals(UtilityType.Condition)) {
       return new ConditionEvaluation(task);
     } else if (utilType.equals(UtilityType.CollectionOperation)) {

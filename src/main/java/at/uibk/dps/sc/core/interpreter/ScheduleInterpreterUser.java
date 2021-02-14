@@ -22,13 +22,19 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
 
   protected final LocalFunctionFactory localFunctionFactory;
 
-  public ScheduleInterpreterUser(LocalFunctionFactory localFunctionFactory) {
+  /**
+   * Default constructor.
+   * 
+   * @param localFunctionFactory the factory for the creation of
+   *        {@link EnactmentFunction}s performing local calculation
+   */
+  public ScheduleInterpreterUser(final LocalFunctionFactory localFunctionFactory) {
     this.localFunctionFactory = localFunctionFactory;
   }
 
   @Override
-  public final EnactmentFunction interpretSchedule(Task task,
-      Set<Mapping<Task, Resource>> scheduleModel) {
+  public final EnactmentFunction interpretSchedule(final Task task,
+      final Set<Mapping<Task, Resource>> scheduleModel) {
     checkSchedule(task, scheduleModel);
     return interpretScheduleUser(task, scheduleModel);
   }
@@ -40,8 +46,8 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param task the scheduled task
    * @param scheduleModel the schedule model
    */
-  protected void checkSchedule(Task task, Set<Mapping<Task, Resource>> scheduleModel) {
-    if (scheduleModel.size() < 1) {
+  protected void checkSchedule(final Task task, final Set<Mapping<Task, Resource>> scheduleModel) {
+    if (scheduleModel.isEmpty()) {
       throw new IllegalArgumentException("A user task must be scheduled to at least one mapping.");
     }
   }
@@ -52,10 +58,10 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param mapping the provided mapping edge
    * @return the enactment function corresponding to the provided mapping edge
    */
-  protected EnactmentFunction getFunctionForMapping(Mapping<Task, Resource> mapping) {
-    Task task = mapping.getSource();
-    Resource target = mapping.getTarget();
-    ResourceType resType = PropertyServiceResource.getResourceType(target);
+  protected EnactmentFunction getFunctionForMapping(final Mapping<Task, Resource> mapping) {
+    final Task task = mapping.getSource();
+    final Resource target = mapping.getTarget();
+    final ResourceType resType = PropertyServiceResource.getResourceType(target);
     if (resType.equals(ResourceType.Local)) {
       return interpretLocal(task, target);
     } else if (resType.equals(ResourceType.Serverless)) {
@@ -72,9 +78,9 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param resource the local resource
    * @return the enactment function for the task on the local resource
    */
-  protected EnactmentFunction interpretLocal(Task task, Resource resource) {
+  protected EnactmentFunction interpretLocal(final Task task, final Resource resource) {
     try {
-      LocalCalculations localFunction =
+      final LocalCalculations localFunction =
           LocalCalculations.valueOf(PropertyServiceFunctionUser.getFunctionTypeString(task));
       return localFunctionFactory.getLocalFunction(localFunction);
     } catch (IllegalArgumentException exc) {
@@ -91,7 +97,7 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param resource the local resource
    * @return the enactment function for the task on a serverless resource
    */
-  protected EnactmentFunction interpretServerless(Task task, Resource resource) {
+  protected EnactmentFunction interpretServerless(final Task task, final Resource resource) {
     throw new IllegalStateException("Not yet implemented.");
   }
 
@@ -102,6 +108,6 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param scheduleModel the schedule model
    * @return the enactment function resulting from the schedule.
    */
-  protected abstract EnactmentFunction interpretScheduleUser(Task task,
-      Set<Mapping<Task, Resource>> scheduleModel);
+  protected abstract EnactmentFunction interpretScheduleUser(final Task task,
+      final Set<Mapping<Task, Resource>> scheduleModel);
 }
