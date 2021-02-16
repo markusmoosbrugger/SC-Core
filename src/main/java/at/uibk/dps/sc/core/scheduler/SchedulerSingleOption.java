@@ -31,7 +31,7 @@ public class SchedulerSingleOption extends SchedulerAbstract {
   protected Set<Mapping<Task, Resource>> chooseMappingSubset(final Task task,
       final Set<Mapping<Task, Resource>> mappingOptions) {
     if (mappingOptions.size() != 1) {
-      throw new IllegalArgumentException("More than one mapping provided for task " + task.getId());
+      throw new IllegalArgumentException("Not exactly one mapping provided for task " + task.getId());
     }
     return new HashSet<>(mappingOptions);
   }

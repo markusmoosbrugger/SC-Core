@@ -10,6 +10,7 @@ import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.graph.EnactmentSpecification;
 import at.uibk.dps.ee.model.graph.ResourceGraph;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Mappings;
 import net.sf.opendse.model.Resource;
@@ -19,7 +20,7 @@ public class SchedulerSingleOptionTest {
 
   @Test
   public void test() {
-    Task task = new Task("task");
+    Task task = PropertyServiceFunctionUser.createUserTask("bla", "addition");
     Resource res = new Resource("res");
     Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("m", task, res);
     Set<Mapping<Task, Resource>> expected = new HashSet<>();
@@ -38,7 +39,7 @@ public class SchedulerSingleOptionTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testMoreThanOne() {
-    Task task = new Task("task");
+    Task task = PropertyServiceFunctionUser.createUserTask("bla", "addition");
     Resource res = new Resource("res");
     Resource res2 = new Resource("res2");
     Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("m", task, res);

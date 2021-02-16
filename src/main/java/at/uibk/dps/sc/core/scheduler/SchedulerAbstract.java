@@ -1,8 +1,11 @@
 package at.uibk.dps.sc.core.scheduler;
 
+import java.util.HashSet;
 import java.util.Set;
 import at.uibk.dps.ee.model.graph.EnactmentSpecification;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Mappings;
 import net.sf.opendse.model.Resource;
@@ -30,7 +33,11 @@ public abstract class SchedulerAbstract implements Scheduler {
   @Override
   public Set<Mapping<Task, Resource>> scheduleTask(final Task task) {
     final Mappings<Task, Resource> mappings = specification.getMappings();
-    return chooseMappingSubset(task, mappings.get(task));
+    if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
+      return chooseMappingSubset(task, mappings.get(task));
+    } else {
+      return new HashSet<>();
+    }
   }
 
   /**
