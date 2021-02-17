@@ -40,6 +40,39 @@ public class SchedulerAbstractTest {
   }
 
   @Test
+  public void testGetTaskMappingOptions() {
+    Task parent = new Task("parent");
+    Task child = new Task("child");
+    child.setParent(parent);
+
+    Resource res = new Resource("res");
+    Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("mapping", parent, res);
+    Mappings<Task, Resource> mappings = new Mappings<>();
+    mappings.add(mapping);
+
+    SpecificationProvider mock = mock(SpecificationProvider.class);
+    SchedulerMock tested = new SchedulerMock(mock);
+
+    assertEquals(mapping, tested.getTaskMappingOptions(mappings, parent).iterator().next());
+    assertEquals(mapping, tested.getTaskMappingOptions(mappings, child).iterator().next());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetTaskMappingOptionsExc() {
+    Task parent = new Task("parent");
+    Task child = new Task("child");
+
+    Resource res = new Resource("res");
+    Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("mapping", parent, res);
+    Mappings<Task, Resource> mappings = new Mappings<>();
+    mappings.add(mapping);
+
+    SpecificationProvider mock = mock(SpecificationProvider.class);
+    SchedulerMock tested = new SchedulerMock(mock);
+    tested.getTaskMappingOptions(mappings, child);
+  }
+
+  @Test
   public void testUser() {
     Task task = PropertyServiceFunctionUser.createUserTask("task", "addition");
     Resource res = new Resource("res");

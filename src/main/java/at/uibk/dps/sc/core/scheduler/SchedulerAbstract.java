@@ -32,11 +32,32 @@ public abstract class SchedulerAbstract implements Scheduler {
 
   @Override
   public Set<Mapping<Task, Resource>> scheduleTask(final Task task) {
-    final Mappings<Task, Resource> mappings = specification.getMappings();
     if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
-      return chooseMappingSubset(task, mappings.get(task));
+      return chooseMappingSubset(task, getTaskMappingOptions(specification.getMappings(), task));
     } else {
       return new HashSet<>();
+    }
+  }
+
+  /**
+   * Returns the mappings annotated for the given task in the specification
+   * (checks the parent task in case no mappings are found).
+   * 
+   * @param task the task to check
+   * @return the mappings annotated for the given task in the specification
+   *         (checks the parent task in case no mappings are found)
+   */
+  protected Set<Mapping<Task, Resource>> getTaskMappingOptions(
+      Mappings<Task, Resource> specMappings, Task task) {
+    Set<Mapping<Task, Resource>> result = new HashSet<>(specMappings.get(task));
+    if (result.isEmpty()) {
+      if (task.getParent() != null) {
+        return getTaskMappingOptions(specMappings, (Task) task.getParent());
+      } else {
+        throw new IllegalArgumentException("No mappings provided for the task " + task.getId());
+      }
+    } else {
+      return result;
     }
   }
 
