@@ -48,13 +48,13 @@ public abstract class SchedulerAbstract implements Scheduler {
    *         (checks the parent task in case no mappings are found)
    */
   protected Set<Mapping<Task, Resource>> getTaskMappingOptions(
-      Mappings<Task, Resource> specMappings, Task task) {
-    Set<Mapping<Task, Resource>> result = new HashSet<>(specMappings.get(task));
+      final Mappings<Task, Resource> specMappings, final Task task) {
+    final Set<Mapping<Task, Resource>> result = new HashSet<>(specMappings.get(task));
     if (result.isEmpty()) {
-      if (task.getParent() != null) {
-        return getTaskMappingOptions(specMappings, (Task) task.getParent());
-      } else {
+      if (task.getParent() == null) {
         throw new IllegalArgumentException("No mappings provided for the task " + task.getId());
+      } else {
+        return getTaskMappingOptions(specMappings, (Task) task.getParent());
       }
     } else {
       return result;
