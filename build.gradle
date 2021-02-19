@@ -27,10 +27,10 @@ repositories {
 
 dependencies {
   // dependencies to Apollo repositories
-  implementation 'com.github.Apollo-Core:EE-Model:enactmentState-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Core:enactmentState-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Enactables:enactmentState-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Guice:enactmentState-SNAPSHOT'
+  implementation 'com.github.Apollo-Core:EE-Model:main-SNAPSHOT'
+  implementation 'com.github.Apollo-Core:EE-Core:master-SNAPSHOT'
+  implementation 'com.github.Apollo-Core:EE-Enactables:master-SNAPSHOT'
+  implementation 'com.github.Apollo-Core:EE-Guice:main-SNAPSHOT'
 
   // dependency to Opt4J
   implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
