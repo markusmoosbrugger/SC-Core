@@ -60,7 +60,7 @@ public class SchedulerModule extends EeModule {
     return schedulingMode;
   }
 
-  public void setSchedulingMode(SchedulingMode schedulingMode) {
+  public void setSchedulingMode(final SchedulingMode schedulingMode) {
     this.schedulingMode = schedulingMode;
   }
 
@@ -68,7 +68,7 @@ public class SchedulerModule extends EeModule {
     return mappingsToPick;
   }
 
-  public void setMappingsToPick(int mappingsToPick) {
+  public void setMappingsToPick(final int mappingsToPick) {
     this.mappingsToPick = mappingsToPick;
   }
 }

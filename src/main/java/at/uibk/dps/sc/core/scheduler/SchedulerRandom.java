@@ -13,23 +13,37 @@ import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
 
+/**
+ * The {@link SchedulerRandom} randomly picks a (non-unique) subcollection of
+ * given size from the mappings available for a user task.
+ * 
+ * @author Fedor Smirnov
+ */
 public class SchedulerRandom extends SchedulerAbstract {
 
   protected final Random random;
   protected final int mappingsToPick;
 
+  /**
+   * The injection constructor.
+   * 
+   * @param specProvider the specification provider
+   * @param random the random number generator
+   * @param mappingsToPick the number of mappings to pick
+   */
   @Inject
-  public SchedulerRandom(SpecificationProvider specProvider, Random random,
-      @Constant(namespace = SchedulerRandom.class, value = "mappingsToPick") int mappingsToPick) {
+  public SchedulerRandom(final SpecificationProvider specProvider, final Random random,
+      @Constant(namespace = SchedulerRandom.class,
+          value = "mappingsToPick") final int mappingsToPick) {
     super(specProvider);
     this.random = random;
     this.mappingsToPick = mappingsToPick;
   }
 
   @Override
-  protected Set<Mapping<Task, Resource>> chooseMappingSubset(Task task,
-      Set<Mapping<Task, Resource>> mappingOptions) {
-    List<Mapping<Task, Resource>> mappingList = new ArrayList<>(mappingOptions);
+  protected Set<Mapping<Task, Resource>> chooseMappingSubset(final Task task,
+      final Set<Mapping<Task, Resource>> mappingOptions) {
+    final List<Mapping<Task, Resource>> mappingList = new ArrayList<>(mappingOptions);
     return IntStream.generate(() -> random.nextInt(mappingOptions.size())).limit(mappingsToPick)
         .boxed().map(index -> mappingList.get(index)).collect(Collectors.toSet());
   }
