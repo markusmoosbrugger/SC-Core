@@ -1,0 +1,36 @@
+package at.uibk.dps.sc.core.scheduler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.opt4j.core.start.Constant;
+import com.google.inject.Inject;
+import at.uibk.dps.ee.model.graph.SpecificationProvider;
+import net.sf.opendse.model.Mapping;
+import net.sf.opendse.model.Resource;
+import net.sf.opendse.model.Task;
+
+public class SchedulerRandom extends SchedulerAbstract {
+
+  protected final Random random;
+  protected final int mappingsToPick;
+
+  @Inject
+  public SchedulerRandom(SpecificationProvider specProvider, Random random,
+      @Constant(namespace = SchedulerRandom.class, value = "mappingsToPick") int mappingsToPick) {
+    super(specProvider);
+    this.random = random;
+    this.mappingsToPick = mappingsToPick;
+  }
+
+  @Override
+  protected Set<Mapping<Task, Resource>> chooseMappingSubset(Task task,
+      Set<Mapping<Task, Resource>> mappingOptions) {
+    List<Mapping<Task, Resource>> mappingList = new ArrayList<>(mappingOptions);
+    return IntStream.generate(() -> random.nextInt(mappingOptions.size())).limit(mappingsToPick)
+        .boxed().map(index -> mappingList.get(index)).collect(Collectors.toSet());
+  }
+}

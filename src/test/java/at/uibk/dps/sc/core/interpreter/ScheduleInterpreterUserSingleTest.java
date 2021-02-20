@@ -4,7 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import at.uibk.dps.ee.enactables.local.LocalFunctionAbstract;
 import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
-import at.uibk.dps.ee.enactables.local.calculation.LocalFunctionFactory;
+import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource.ResourceType;
@@ -26,16 +27,18 @@ public class ScheduleInterpreterUserSingleTest {
     Set<Mapping<Task, Resource>> localSchedule = new HashSet<>();
     localSchedule.add(localMapping);
     LocalFunctionAbstract functionMockLockal = mock(LocalFunctionAbstract.class);
-    LocalFunctionFactory factoryMock = mock(LocalFunctionFactory.class);
+    FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
+    FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
     when(factoryMock.getLocalFunction(LocalCalculations.Addition)).thenReturn(functionMockLockal);
-    ScheduleInterpreterUserSingle tested = new ScheduleInterpreterUserSingle(factoryMock);
+    ScheduleInterpreterUserSingle tested = new ScheduleInterpreterUserSingle(factoryMock, mockFacSl);
     assertEquals(functionMockLockal, tested.interpretSchedule(task, localSchedule));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCheckSchedule() {
-    LocalFunctionFactory mockFactory = mock(LocalFunctionFactory.class);
-    ScheduleInterpreterUserSingle tested = new ScheduleInterpreterUserSingle(mockFactory);
+    FunctionFactoryLocal mockFactory = mock(FunctionFactoryLocal.class);
+    FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
+    ScheduleInterpreterUserSingle tested = new ScheduleInterpreterUserSingle(mockFactory, mockFacSl);
     Task task = new Task("task");
     Resource res = new Resource("res");
     Resource res2 = new Resource("res2");

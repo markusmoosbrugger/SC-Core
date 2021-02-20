@@ -3,7 +3,8 @@ package at.uibk.dps.sc.core.interpreter;
 import java.util.Set;
 import com.google.inject.Inject;
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
-import at.uibk.dps.ee.enactables.local.calculation.LocalFunctionFactory;
+import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
@@ -22,10 +23,12 @@ public class ScheduleInterpreterUserSingle extends ScheduleInterpreterUser {
    * 
    * @param localFunctionFactory the factory used for the creation of
    *        {@link EnactmentFunction} used for the local calculation.
+   * @param functionFactorySl the factory creating the serverless functions
    */
   @Inject
-  public ScheduleInterpreterUserSingle(final LocalFunctionFactory localFunctionFactory) {
-    super(localFunctionFactory);
+  public ScheduleInterpreterUserSingle(final FunctionFactoryLocal localFunctionFactory,
+      final FunctionFactoryServerless functionFactorySl) {
+    super(localFunctionFactory, functionFactorySl);
   }
 
   @Override

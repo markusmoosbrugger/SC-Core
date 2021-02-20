@@ -4,7 +4,8 @@ import java.util.Set;
 
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
-import at.uibk.dps.ee.enactables.local.calculation.LocalFunctionFactory;
+import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource.ResourceType;
@@ -20,16 +21,18 @@ import net.sf.opendse.model.Task;
  */
 public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
 
-  protected final LocalFunctionFactory localFunctionFactory;
+  protected final FunctionFactoryLocal functionFactoryLocal;
+  protected final FunctionFactoryServerless functionFactorySl;
 
   /**
    * Default constructor.
    * 
-   * @param localFunctionFactory the factory for the creation of
+   * @param functionFactoryLocal the factory for the creation of
    *        {@link EnactmentFunction}s performing local calculation
    */
-  public ScheduleInterpreterUser(final LocalFunctionFactory localFunctionFactory) {
-    this.localFunctionFactory = localFunctionFactory;
+  public ScheduleInterpreterUser(final FunctionFactoryLocal functionFactoryLocal, final FunctionFactoryServerless functionFactorySl) {
+    this.functionFactoryLocal = functionFactoryLocal;
+    this.functionFactorySl = functionFactorySl;
   }
 
   @Override
@@ -82,7 +85,7 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
     try {
       final LocalCalculations localFunction =
           LocalCalculations.valueOf(PropertyServiceFunctionUser.getFunctionTypeString(task));
-      return localFunctionFactory.getLocalFunction(localFunction);
+      return functionFactoryLocal.getLocalFunction(localFunction);
     } catch (IllegalArgumentException exc) {
       throw new IllegalStateException(
           "The task " + task.getId() + " is annotated with a type which cannot be run locally: "
@@ -99,7 +102,7 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @return the enactment function for the task on a serverless resource
    */
   protected EnactmentFunction interpretServerless(final Task task, final Resource resource) {
-    throw new IllegalStateException("Not yet implemented.");
+    return functionFactorySl.createServerlessFunction(resource);
   }
 
   /**
