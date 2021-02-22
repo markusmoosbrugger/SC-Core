@@ -2,6 +2,7 @@ package at.uibk.dps.sc.core;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import com.google.inject.Singleton;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
@@ -12,6 +13,7 @@ import net.sf.opendse.model.Task;
  * 
  * @author Fedor Smirnov
  */
+@Singleton
 public class ScheduleModel {
 
   protected final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> scheduleMap =
