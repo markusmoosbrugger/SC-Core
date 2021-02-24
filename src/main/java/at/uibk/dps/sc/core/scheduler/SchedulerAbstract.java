@@ -2,6 +2,7 @@ package at.uibk.dps.sc.core.scheduler;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import at.uibk.dps.ee.model.graph.EnactmentSpecification;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
@@ -20,6 +21,7 @@ import net.sf.opendse.model.Task;
 public abstract class SchedulerAbstract implements Scheduler {
 
   protected final EnactmentSpecification specification;
+  protected final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> concurrentMappings;
 
   /**
    * Default constructor
@@ -28,12 +30,26 @@ public abstract class SchedulerAbstract implements Scheduler {
    */
   public SchedulerAbstract(final SpecificationProvider specProvider) {
     this.specification = specProvider.getSpecification();
+    this.concurrentMappings = makeConcurrentMappings(specification.getMappings());
+  }
+
+  protected ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> makeConcurrentMappings(
+      Mappings<Task, Resource> mappings) {
+    ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> result = new ConcurrentHashMap<>();
+    for (Mapping<Task, Resource> mapping : mappings) {
+      if (!result.containsKey(mapping.getSource())) {
+        result.put(mapping.getSource(), new HashSet<>());
+      }
+      result.get(mapping.getSource()).add(mapping);
+    }
+    return result;
   }
 
   @Override
   public Set<Mapping<Task, Resource>> scheduleTask(final Task task) {
     if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
-      return chooseMappingSubset(task, getTaskMappingOptions(specification.getMappings(), task));
+      return chooseMappingSubset(task,
+          getTaskMappingOptions(concurrentMappings.get(getOriginalTask(task)), task));
     } else {
       return new HashSet<>();
     }
@@ -48,21 +64,24 @@ public abstract class SchedulerAbstract implements Scheduler {
    *         (checks the parent task in case no mappings are found)
    */
   protected Set<Mapping<Task, Resource>> getTaskMappingOptions(
-      final Mappings<Task, Resource> specMappings, final Task task) {
-    
-    Set<Mapping<Task, Resource>> result;
-    synchronized (this) {
-      result = new HashSet<>(specMappings.get(task));
-    }
-    
+      final Set<Mapping<Task, Resource>> taskMappings, final Task task) {
+    Set<Mapping<Task, Resource>> result = new HashSet<>(taskMappings);
     if (result.isEmpty()) {
       if (task.getParent() == null) {
         throw new IllegalArgumentException("No mappings provided for the task " + task.getId());
       } else {
-        return getTaskMappingOptions(specMappings, (Task) task.getParent());
+        return getTaskMappingOptions(taskMappings, (Task) task.getParent());
       }
     } else {
       return result;
+    }
+  }
+
+  protected Task getOriginalTask(Task task) {
+    if (task.getParent() == null) {
+      return task;
+    } else {
+      return getOriginalTask((Task) task.getParent());
     }
   }
 

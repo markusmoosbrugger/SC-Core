@@ -47,10 +47,12 @@ public class SchedulerAbstractTest {
 
     Resource res = new Resource("res");
     Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("mapping", parent, res);
-    Mappings<Task, Resource> mappings = new Mappings<>();
+    Set<Mapping<Task, Resource>> mappings = new HashSet<>();
     mappings.add(mapping);
 
     SpecificationProvider mock = mock(SpecificationProvider.class);
+    EnactmentSpecification enactSpec = new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
+    when(mock.getSpecification()).thenReturn(enactSpec);
     SchedulerMock tested = new SchedulerMock(mock);
 
     assertEquals(mapping, tested.getTaskMappingOptions(mappings, parent).iterator().next());
@@ -64,10 +66,11 @@ public class SchedulerAbstractTest {
 
     Resource res = new Resource("res");
     Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("mapping", parent, res);
-    Mappings<Task, Resource> mappings = new Mappings<>();
-    mappings.add(mapping);
+    Set<Mapping<Task, Resource>> mappings = new HashSet<>();
 
     SpecificationProvider mock = mock(SpecificationProvider.class);
+    EnactmentSpecification enactSpec = new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
+    when(mock.getSpecification()).thenReturn(enactSpec);
     SchedulerMock tested = new SchedulerMock(mock);
     tested.getTaskMappingOptions(mappings, child);
   }
