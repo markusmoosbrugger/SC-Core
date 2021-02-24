@@ -3,6 +3,7 @@ package at.uibk.dps.sc.core.scheduler;
 import java.util.HashSet;
 import java.util.Set;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
@@ -15,6 +16,7 @@ import net.sf.opendse.model.Task;
  * 
  * @author Fedor Smirnov
  */
+@Singleton
 public class SchedulerSingleOption extends SchedulerAbstract {
 
   /**

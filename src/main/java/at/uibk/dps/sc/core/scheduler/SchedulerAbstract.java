@@ -49,7 +49,12 @@ public abstract class SchedulerAbstract implements Scheduler {
    */
   protected Set<Mapping<Task, Resource>> getTaskMappingOptions(
       final Mappings<Task, Resource> specMappings, final Task task) {
-    final Set<Mapping<Task, Resource>> result = new HashSet<>(specMappings.get(task));
+    
+    Set<Mapping<Task, Resource>> result;
+    synchronized (this) {
+      result = new HashSet<>(specMappings.get(task));
+    }
+    
     if (result.isEmpty()) {
       if (task.getParent() == null) {
         throw new IllegalArgumentException("No mappings provided for the task " + task.getId());

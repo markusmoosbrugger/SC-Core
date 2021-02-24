@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.opt4j.core.start.Constant;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
@@ -19,6 +20,7 @@ import net.sf.opendse.model.Task;
  * 
  * @author Fedor Smirnov
  */
+@Singleton
 public class SchedulerRandom extends SchedulerAbstract {
 
   protected final Random random;
