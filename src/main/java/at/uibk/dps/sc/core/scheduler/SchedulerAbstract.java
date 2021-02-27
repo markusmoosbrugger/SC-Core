@@ -3,6 +3,7 @@ package at.uibk.dps.sc.core.scheduler;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import com.google.common.base.Optional;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.graph.EnactmentSpecification;
@@ -46,13 +47,8 @@ public abstract class SchedulerAbstract implements Scheduler {
   protected final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> makeConcurrentMappings(
       final Mappings<Task, Resource> mappings) {
     final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> result = new ConcurrentHashMap<>();
-    for (final Mapping<Task, Resource> mapping : mappings) {
-      final Task mappingSrc = mapping.getSource();
-      final Set<Mapping<Task, Resource>> taskMappings =
-          Optional.fromNullable(result.get(mappingSrc)).or(() -> new HashSet<>());
-      taskMappings.add(mapping);
-      result.put(mappingSrc, taskMappings);
-    }
+    mappings.getAll().stream().collect(Collectors.groupingBy(Mapping::getSource))
+        .forEach((task, mappingList) -> result.put(task, new HashSet<>(mappingList)));
     return result;
   }
 
