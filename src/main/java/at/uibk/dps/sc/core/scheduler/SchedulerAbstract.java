@@ -3,6 +3,8 @@ package at.uibk.dps.sc.core.scheduler;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import com.google.common.base.Optional;
+import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.graph.EnactmentSpecification;
 import at.uibk.dps.ee.model.graph.SpecificationProvider;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
@@ -33,14 +35,23 @@ public abstract class SchedulerAbstract implements Scheduler {
     this.concurrentMappings = makeConcurrentMappings(specification.getMappings());
   }
 
-  protected ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> makeConcurrentMappings(
-      Mappings<Task, Resource> mappings) {
-    ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> result = new ConcurrentHashMap<>();
-    for (Mapping<Task, Resource> mapping : mappings) {
-      if (!result.containsKey(mapping.getSource())) {
-        result.put(mapping.getSource(), new HashSet<>());
-      }
-      result.get(mapping.getSource()).add(mapping);
+  /**
+   * Converts the {@link Mappings} to a concurrent hashmap which can be
+   * concurrently accessed by a large number of scheduling agents.
+   * 
+   * @param mappings the mappings from the specification
+   * @return a concurrent hashmap which can be concurrently accessed by a large
+   *         number of scheduling agents
+   */
+  protected final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> makeConcurrentMappings(
+      final Mappings<Task, Resource> mappings) {
+    final ConcurrentHashMap<Task, Set<Mapping<Task, Resource>>> result = new ConcurrentHashMap<>();
+    for (final Mapping<Task, Resource> mapping : mappings) {
+      final Task mappingSrc = mapping.getSource();
+      final Set<Mapping<Task, Resource>> taskMappings =
+          Optional.fromNullable(result.get(mappingSrc)).or(() -> new HashSet<>());
+      taskMappings.add(mapping);
+      result.put(mappingSrc, taskMappings);
     }
     return result;
   }
@@ -65,7 +76,7 @@ public abstract class SchedulerAbstract implements Scheduler {
    */
   protected Set<Mapping<Task, Resource>> getTaskMappingOptions(
       final Set<Mapping<Task, Resource>> taskMappings, final Task task) {
-    Set<Mapping<Task, Resource>> result = new HashSet<>(taskMappings);
+    final Set<Mapping<Task, Resource>> result = new HashSet<>(taskMappings);
     if (result.isEmpty()) {
       if (task.getParent() == null) {
         throw new IllegalArgumentException("No mappings provided for the task " + task.getId());
@@ -77,7 +88,16 @@ public abstract class SchedulerAbstract implements Scheduler {
     }
   }
 
-  protected Task getOriginalTask(Task task) {
+  /**
+   * Returns the original task defined in the {@link EnactmentGraph} of the
+   * specification (as opposed to, e.g., the reproductions created during the
+   * parallel for distribution).
+   * 
+   * @param task the given task
+   * @return the original task from the spec (either the given task or its
+   *         (grand)parent)
+   */
+  protected Task getOriginalTask(final Task task) {
     if (task.getParent() == null) {
       return task;
     } else {

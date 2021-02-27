@@ -51,7 +51,8 @@ public class SchedulerAbstractTest {
     mappings.add(mapping);
 
     SpecificationProvider mock = mock(SpecificationProvider.class);
-    EnactmentSpecification enactSpec = new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
+    EnactmentSpecification enactSpec =
+        new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
     when(mock.getSpecification()).thenReturn(enactSpec);
     SchedulerMock tested = new SchedulerMock(mock);
 
@@ -61,15 +62,11 @@ public class SchedulerAbstractTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testGetTaskMappingOptionsExc() {
-    Task parent = new Task("parent");
     Task child = new Task("child");
-
-    Resource res = new Resource("res");
-    Mapping<Task, Resource> mapping = new Mapping<Task, Resource>("mapping", parent, res);
     Set<Mapping<Task, Resource>> mappings = new HashSet<>();
-
     SpecificationProvider mock = mock(SpecificationProvider.class);
-    EnactmentSpecification enactSpec = new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
+    EnactmentSpecification enactSpec =
+        new EnactmentSpecification(new EnactmentGraph(), new ResourceGraph(), new Mappings<>());
     when(mock.getSpecification()).thenReturn(enactSpec);
     SchedulerMock tested = new SchedulerMock(mock);
     tested.getTaskMappingOptions(mappings, child);
@@ -88,8 +85,8 @@ public class SchedulerAbstractTest {
     ResourceGraph rGraph = new ResourceGraph();
     EnactmentSpecification spec = new EnactmentSpecification(eGraph, rGraph, mappings);
     SpecificationProvider providerMock = mock(SpecificationProvider.class);
-    when(providerMock.getMappings()).thenReturn(mappings);
     when(providerMock.getSpecification()).thenReturn(spec);
+    
 
     SchedulerMock tested = new SchedulerMock(providerMock);
     SchedulerMock testedSpy = spy(tested);
