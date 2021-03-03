@@ -15,13 +15,14 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollection
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
 import static org.mockito.Mockito.spy;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import static org.mockito.Mockito.doReturn;
 
@@ -71,10 +72,9 @@ public class ScheduleInterpreterEETest {
   @Test
   public void testGetUtilityFunction() {
     ScheduleInterpreterEE tested = new ScheduleInterpreterEE();
-    Set<Condition> conditions = new HashSet<>();
-    Summary summary = Summary.AND;
-    Task conditionTask = PropertyServiceFunctionUtilityCondition.createConditionEvaluation("bla",
-        conditions, summary);
+    List<Condition> conditions = new ArrayList<>();
+    Task conditionTask =
+        PropertyServiceFunctionUtilityCondition.createConditionEvaluation("bla", conditions);
     Task collectionTask = PropertyServiceFunctionUtilityCollections.createCollectionOperation("bla",
         "blabla", CollectionOperation.Block);
     assertTrue(tested.getUtilityFunction(collectionTask) instanceof CollOperFunction);

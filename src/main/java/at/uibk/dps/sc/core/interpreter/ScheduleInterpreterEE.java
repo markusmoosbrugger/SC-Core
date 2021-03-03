@@ -6,6 +6,7 @@ import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.dataflow.Aggregation;
 import at.uibk.dps.ee.enactables.local.dataflow.Distribution;
 import at.uibk.dps.ee.enactables.local.dataflow.EarliestArrival;
+import at.uibk.dps.ee.enactables.local.dataflow.Multiplexer;
 import at.uibk.dps.ee.enactables.local.utility.CollOperFunction;
 import at.uibk.dps.ee.enactables.local.utility.ConditionEvaluation;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
@@ -55,7 +56,9 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
     final DataFlowType dfType = PropertyServiceFunctionDataFlow.getDataFlowType(task);
     if (dfType.equals(DataFlowType.EarliestInput)) {
       return new EarliestArrival();
-    } else if (dfType.equals(DataFlowType.Collections)) {
+    }else if (dfType.equals(DataFlowType.Multiplexer)) {
+      return new Multiplexer();
+    }else if (dfType.equals(DataFlowType.Collections)) {
       final OperationType oType = PropertyServiceFunctionDataFlowCollections.getOperationType(task);
       if (oType.equals(OperationType.Aggregation)) {
         return new Aggregation();
