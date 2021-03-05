@@ -6,6 +6,7 @@ import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.dataflow.Aggregation;
 import at.uibk.dps.ee.enactables.local.dataflow.Distribution;
 import at.uibk.dps.ee.enactables.local.dataflow.EarliestArrival;
+import at.uibk.dps.ee.enactables.local.dataflow.Multiplexer;
 import at.uibk.dps.ee.enactables.local.utility.CollOperFunction;
 import at.uibk.dps.ee.enactables.local.utility.ConditionEvaluation;
 import at.uibk.dps.ee.model.objects.Condition;
@@ -64,9 +65,12 @@ public class ScheduleInterpreterEETest {
         OperationType.Aggregation, "scope");
     Task distTask = PropertyServiceFunctionDataFlowCollections.createCollectionDataFlowTask("t1",
         OperationType.Distribution, "scope");
+    Task muxerTask =
+        PropertyServiceFunctionDataFlow.createDataFlowFunction("t1", DataFlowType.Multiplexer);
     assertTrue(tested.getDataFlowFunction(earliestInTask) instanceof EarliestArrival);
     assertTrue(tested.getDataFlowFunction(distTask) instanceof Distribution);
     assertTrue(tested.getDataFlowFunction(aggrTask) instanceof Aggregation);
+    assertTrue(tested.getDataFlowFunction(muxerTask) instanceof Multiplexer);
   }
 
   @Test
