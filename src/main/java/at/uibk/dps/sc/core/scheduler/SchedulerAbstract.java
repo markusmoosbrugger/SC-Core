@@ -54,7 +54,7 @@ public abstract class SchedulerAbstract implements Scheduler {
   @Override
   public Set<Mapping<Task, Resource>> scheduleTask(final Task task) {
     if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
-      Task taskKey = getOriginalTask(task);
+      final Task taskKey = getOriginalTask(task);
       if (!concurrentMappings.containsKey(taskKey)) {
         throw new IllegalStateException(
             "No mapping options provided for the task " + taskKey.getId());
