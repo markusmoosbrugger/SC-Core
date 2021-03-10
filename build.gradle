@@ -27,10 +27,17 @@ repositories {
 
 dependencies {
   // dependencies to Apollo repositories
-  implementation 'com.github.Apollo-Core:EE-Model:main-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Core:master-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Enactables:master-SNAPSHOT'
-  implementation 'com.github.Apollo-Core:EE-Guice:main-SNAPSHOT'
+  if (project.hasProperty("local")) {
+    implementation project (':EE-Core')
+    implementation project (':EE-Guice')
+    implementation project (':EE-Model')
+    implementation project (':EE-Enactables')
+  }else {
+    implementation 'com.github.Apollo-Core:EE-Model:main-SNAPSHOT'
+    implementation 'com.github.Apollo-Core:EE-Core:master-SNAPSHOT'
+    implementation 'com.github.Apollo-Core:EE-Enactables:master-SNAPSHOT'
+    implementation 'com.github.Apollo-Core:EE-Guice:main-SNAPSHOT'
+  }
 
   // dependency to Opt4J
   implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
@@ -47,12 +54,12 @@ dependencies {
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled true
-    }
-    afterEvaluate {
-        classDirectories.from = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: '**/modules/**')
-        })
-    }
+  reports {
+    xml.enabled true
+  }
+  afterEvaluate {
+    classDirectories.from = files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: '**/modules/**')
+    })
+  }
 }
