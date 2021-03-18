@@ -22,10 +22,11 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
 
   protected final FunctionFactoryDataFlow factoryDataFlow;
   protected final FunctionFactoryUtility factoryUtility;
-  
-  
+
+
   @Inject
-  public ScheduleInterpreterEE(FunctionFactoryDataFlow factoryDataFlow, FunctionFactoryUtility factoryUtility) {
+  public ScheduleInterpreterEE(final FunctionFactoryDataFlow factoryDataFlow,
+      final FunctionFactoryUtility factoryUtility) {
     this.factoryDataFlow = factoryDataFlow;
     this.factoryUtility = factoryUtility;
   }
