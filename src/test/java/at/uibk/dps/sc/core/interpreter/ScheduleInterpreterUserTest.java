@@ -10,10 +10,12 @@ import at.uibk.dps.ee.enactables.local.LocalFunctionAbstract;
 import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.enactables.serverless.ServerlessFunction;
+import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
+import at.uibk.dps.ee.model.properties.PropertyServiceMapping;
+import at.uibk.dps.ee.model.properties.PropertyServiceMapping.EnactmentMode;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource;
 import at.uibk.dps.ee.model.properties.PropertyServiceResourceServerless;
-import at.uibk.dps.ee.model.properties.PropertyServiceResource.ResourceType;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
@@ -43,19 +45,20 @@ public class ScheduleInterpreterUserTest {
   @Test
   public void getFunctionForMappingTest() {
     Task task = PropertyServiceFunctionUser.createUserTask("task", "Addition");
-    Resource local = PropertyServiceResource.createResource("res", ResourceType.Local);
+    Resource local = PropertyServiceResource.createResource("res");
     Resource serverless =
         PropertyServiceResourceServerless.createServerlessResource("res", "resLink");
-    Mapping<Task, Resource> localMapping = new Mapping<Task, Resource>("local", task, local);
+    Mapping<Task, Resource> localMapping = PropertyServiceMapping.createMapping(task, local,
+        EnactmentMode.Local, ConstantsEEModel.implIdLocalNative);
     Mapping<Task, Resource> serverlessMapping =
-        new Mapping<Task, Resource>("serverless", task, serverless);
+        PropertyServiceMapping.createMapping(task, serverless, EnactmentMode.Serverless, "resLink");
     LocalFunctionAbstract functionMockLockal = mock(LocalFunctionAbstract.class);
     FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
     InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
     InterpreterMock spy = spy(tested);
     EnactmentFunction serverlessFunc = mock(EnactmentFunction.class);
-    Mockito.doReturn(serverlessFunc).when(spy).interpretServerless(task, serverless);
+    Mockito.doReturn(serverlessFunc).when(spy).interpretServerless(serverlessMapping);
     Mockito.doReturn(functionMockLockal).when(spy).interpretLocal(task, local);
     assertEquals(serverlessFunc, spy.getFunctionForMapping(serverlessMapping));
     assertEquals(functionMockLockal, spy.getFunctionForMapping(localMapping));
@@ -72,18 +75,20 @@ public class ScheduleInterpreterUserTest {
     InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
     assertEquals(functionMock, tested.interpretLocal(task, res));
   }
-  
+
   @Test
   public void interpretServerlessTest() {
     Task task = PropertyServiceFunctionUser.createUserTask("task", "fancyType");
     String resLink = "link";
     Resource res = PropertyServiceResourceServerless.createServerlessResource("res", resLink);
-    FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);    
+    Mapping<Task, Resource> mapping =
+        PropertyServiceMapping.createMapping(task, res, EnactmentMode.Serverless, resLink);
+    FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
     ServerlessFunction slFuncMock = mock(ServerlessFunction.class);
-    when(mockFacSl.createServerlessFunction(res)).thenReturn(slFuncMock);
+    when(mockFacSl.createServerlessFunction(mapping)).thenReturn(slFuncMock);
     InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
-    assertEquals(slFuncMock, tested.interpretServerless(task, res));
+    assertEquals(slFuncMock, tested.interpretServerless(mapping));
   }
 
   @Test(expected = IllegalStateException.class)

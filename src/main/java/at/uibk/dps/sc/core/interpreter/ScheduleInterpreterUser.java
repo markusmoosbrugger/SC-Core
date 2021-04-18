@@ -7,8 +7,8 @@ import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
 import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
-import at.uibk.dps.ee.model.properties.PropertyServiceResource;
-import at.uibk.dps.ee.model.properties.PropertyServiceResource.ResourceType;
+import at.uibk.dps.ee.model.properties.PropertyServiceMapping;
+import at.uibk.dps.ee.model.properties.PropertyServiceMapping.EnactmentMode;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
@@ -64,11 +64,11 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
   protected EnactmentFunction getFunctionForMapping(final Mapping<Task, Resource> mapping) {
     final Task task = mapping.getSource();
     final Resource target = mapping.getTarget();
-    final ResourceType resType = PropertyServiceResource.getResourceType(target);
-    if (resType.equals(ResourceType.Local)) {
+    final EnactmentMode resType = PropertyServiceMapping.getEnactmentMode(mapping);
+    if (resType.equals(EnactmentMode.Local)) {
       return interpretLocal(task, target);
-    } else if (resType.equals(ResourceType.Serverless)) {
-      return interpretServerless(task, target);
+    } else if (resType.equals(EnactmentMode.Serverless)) {
+      return interpretServerless(mapping);
     } else {
       throw new IllegalArgumentException("Unknown resource type " + resType.name());
     }
@@ -84,12 +84,12 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
   protected EnactmentFunction interpretLocal(final Task task, final Resource resource) {
     try {
       final LocalCalculations localFunction =
-          LocalCalculations.valueOf(PropertyServiceFunctionUser.getFunctionTypeString(task));
+          LocalCalculations.valueOf(PropertyServiceFunctionUser.getTypeId(task));
       return functionFactoryLocal.getLocalFunction(localFunction);
     } catch (IllegalArgumentException exc) {
       throw new IllegalStateException(
           "The task " + task.getId() + " is annotated with a type which cannot be run locally: "
-              + PropertyServiceFunctionUser.getFunctionTypeString(task),
+              + PropertyServiceFunctionUser.getTypeId(task),
           exc);
     }
   }
@@ -97,12 +97,11 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
   /**
    * Gets the enactment function for the task on a serverless resource.
    * 
-   * @param task the task
-   * @param resource the local resource
+   * @param mapping the mapping
    * @return the enactment function for the task on a serverless resource
    */
-  protected EnactmentFunction interpretServerless(final Task task, final Resource resource) {
-    return functionFactorySl.createServerlessFunction(resource);
+  protected EnactmentFunction interpretServerless(Mapping<Task, Resource> mapping) {
+    return functionFactorySl.createServerlessFunction(mapping);
   }
 
   /**
