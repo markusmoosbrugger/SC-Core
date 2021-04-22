@@ -28,6 +28,15 @@ public class ScheduleModel {
   public boolean isScheduled(final Task functionTask) {
     return scheduleMap.containsKey(functionTask);
   }
+  
+  /**
+   * Removes the given task from the schedule.
+   * 
+   * @param task the given task
+   */
+  public void resetTaskSchedule(final Task task) {
+    scheduleMap.remove(task);
+  }
 
   /**
    * Sets the schedule for the given task.

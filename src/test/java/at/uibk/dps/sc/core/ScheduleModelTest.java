@@ -25,6 +25,8 @@ public class ScheduleModelTest {
     tested.setTaskSchedule(task, schedule);
     assertTrue(tested.isScheduled(task));
     assertEquals(schedule, tested.getTaskSchedule(task));
+    tested.resetTaskSchedule(task);
+    assertFalse(tested.isScheduled(task));
   }
 
   @Test(expected = IllegalArgumentException.class)
