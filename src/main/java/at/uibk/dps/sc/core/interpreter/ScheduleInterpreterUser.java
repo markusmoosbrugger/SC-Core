@@ -30,7 +30,8 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param functionFactoryLocal the factory for the creation of
    *        {@link EnactmentFunction}s performing local calculation
    */
-  public ScheduleInterpreterUser(final FunctionFactoryLocal functionFactoryLocal, final FunctionFactoryServerless functionFactorySl) {
+  public ScheduleInterpreterUser(final FunctionFactoryLocal functionFactoryLocal,
+      final FunctionFactoryServerless functionFactorySl) {
     this.functionFactoryLocal = functionFactoryLocal;
     this.functionFactorySl = functionFactorySl;
   }
@@ -100,7 +101,7 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param mapping the mapping
    * @return the enactment function for the task on a serverless resource
    */
-  protected EnactmentFunction interpretServerless(Mapping<Task, Resource> mapping) {
+  protected EnactmentFunction interpretServerless(final Mapping<Task, Resource> mapping) {
     return functionFactorySl.createServerlessFunction(mapping);
   }
 

@@ -23,7 +23,12 @@ public class ScheduleInterpreterEE implements ScheduleInterpreter {
   protected final FunctionFactoryDataFlow factoryDataFlow;
   protected final FunctionFactoryUtility factoryUtility;
 
-
+  /**
+   * Injection constructor.
+   * 
+   * @param factoryDataFlow factory for the data flow functions
+   * @param factoryUtility factory for the utility functions
+   */
   @Inject
   public ScheduleInterpreterEE(final FunctionFactoryDataFlow factoryDataFlow,
       final FunctionFactoryUtility factoryUtility) {
