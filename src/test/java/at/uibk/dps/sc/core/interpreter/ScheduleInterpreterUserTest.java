@@ -5,9 +5,9 @@ import java.util.Set;
 import org.junit.Test;
 import org.mockito.Mockito;
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
-import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
 import at.uibk.dps.ee.enactables.local.LocalFunctionAbstract;
-import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.container.ContainerFunction;
+import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.enactables.serverless.ServerlessFunction;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
@@ -59,21 +59,22 @@ public class ScheduleInterpreterUserTest {
     InterpreterMock spy = spy(tested);
     EnactmentFunction serverlessFunc = mock(EnactmentFunction.class);
     Mockito.doReturn(serverlessFunc).when(spy).interpretServerless(serverlessMapping);
-    Mockito.doReturn(functionMockLockal).when(spy).interpretLocal(task, local);
+    Mockito.doReturn(functionMockLockal).when(spy).interpretLocal(localMapping);
     assertEquals(serverlessFunc, spy.getFunctionForMapping(serverlessMapping));
     assertEquals(functionMockLockal, spy.getFunctionForMapping(localMapping));
   }
 
   @Test
   public void interpretLocalTest() {
-    Task task = PropertyServiceFunctionUser.createUserTask("id", LocalCalculations.Addition.name());
+    Task task = PropertyServiceFunctionUser.createUserTask("id", "Addition");
     Resource res = new Resource("res");
-    LocalFunctionAbstract functionMock = mock(LocalFunctionAbstract.class);
+    ContainerFunction functionMock = mock(ContainerFunction.class);
     FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
-    when(factoryMock.getLocalFunction(LocalCalculations.Addition)).thenReturn(functionMock);
+    Mapping<Task, Resource> localMapping = new Mapping<Task, Resource>("bla", task, res);
+    when(factoryMock.getContainerFunction(localMapping)).thenReturn(functionMock);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
     InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
-    assertEquals(functionMock, tested.interpretLocal(task, res));
+    assertEquals(functionMock, tested.interpretLocal(localMapping));
   }
 
   @Test
@@ -89,16 +90,6 @@ public class ScheduleInterpreterUserTest {
     when(mockFacSl.createServerlessFunction(mapping)).thenReturn(slFuncMock);
     InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
     assertEquals(slFuncMock, tested.interpretServerless(mapping));
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void interpretLocalTestWrongString() {
-    Task task = PropertyServiceFunctionUser.createUserTask("id", "blabla");
-    Resource res = new Resource("res");
-    FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
-    FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
-    InterpreterMock tested = new InterpreterMock(factoryMock, mockFacSl);
-    tested.interpretLocal(task, res);
   }
 
   @Test(expected = IllegalArgumentException.class)

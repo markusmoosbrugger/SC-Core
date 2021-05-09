@@ -3,10 +3,8 @@ package at.uibk.dps.sc.core.interpreter;
 import java.util.Set;
 
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
-import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
-import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceMapping;
 import at.uibk.dps.ee.model.properties.PropertyServiceMapping.EnactmentMode;
 import net.sf.opendse.model.Mapping;
@@ -63,11 +61,9 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @return the enactment function corresponding to the provided mapping edge
    */
   protected EnactmentFunction getFunctionForMapping(final Mapping<Task, Resource> mapping) {
-    final Task task = mapping.getSource();
-    final Resource target = mapping.getTarget();
     final EnactmentMode resType = PropertyServiceMapping.getEnactmentMode(mapping);
     if (resType.equals(EnactmentMode.Local)) {
-      return interpretLocal(task, target);
+      return interpretLocal(mapping);
     } else if (resType.equals(EnactmentMode.Serverless)) {
       return interpretServerless(mapping);
     } else {
@@ -82,17 +78,8 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
    * @param resource the local resource
    * @return the enactment function for the task on the local resource
    */
-  protected EnactmentFunction interpretLocal(final Task task, final Resource resource) {
-    try {
-      final LocalCalculations localFunction =
-          LocalCalculations.valueOf(PropertyServiceFunctionUser.getTypeId(task));
-      return functionFactoryLocal.getLocalFunction(localFunction);
-    } catch (IllegalArgumentException exc) {
-      throw new IllegalStateException(
-          "The task " + task.getId() + " is annotated with a type which cannot be run locally: "
-              + PropertyServiceFunctionUser.getTypeId(task),
-          exc);
-    }
+  protected EnactmentFunction interpretLocal(final Mapping<Task, Resource> mapping) {
+    return functionFactoryLocal.getContainerFunction(mapping);
   }
 
   /**

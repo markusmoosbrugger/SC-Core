@@ -2,9 +2,8 @@ package at.uibk.dps.sc.core.interpreter;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import at.uibk.dps.ee.enactables.local.LocalFunctionAbstract;
-import at.uibk.dps.ee.enactables.local.ConstantsLocal.LocalCalculations;
-import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.container.ContainerFunction;
+import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
@@ -29,10 +28,10 @@ public class ScheduleInterpreterUserSingleTest {
         EnactmentMode.Local, ConstantsEEModel.implIdLocalNative);
     Set<Mapping<Task, Resource>> localSchedule = new HashSet<>();
     localSchedule.add(localMapping);
-    LocalFunctionAbstract functionMockLockal = mock(LocalFunctionAbstract.class);
+    ContainerFunction functionMockLockal = mock(ContainerFunction.class);
     FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
-    when(factoryMock.getLocalFunction(LocalCalculations.Addition)).thenReturn(functionMockLockal);
+    when(factoryMock.getContainerFunction(localMapping)).thenReturn(functionMockLockal);
     ScheduleInterpreterUserSingle tested =
         new ScheduleInterpreterUserSingle(factoryMock, mockFacSl);
     assertEquals(functionMockLockal, tested.interpretSchedule(task, localSchedule));

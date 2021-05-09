@@ -3,7 +3,7 @@ package at.uibk.dps.sc.core.interpreter;
 import java.util.Set;
 import com.google.inject.Inject;
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
-import at.uibk.dps.ee.enactables.local.calculation.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
