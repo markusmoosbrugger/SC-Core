@@ -8,6 +8,7 @@ import at.uibk.dps.ee.guice.modules.EeModule;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUser;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUserSingle;
 import at.uibk.dps.sc.core.scheduler.Scheduler;
+import at.uibk.dps.sc.core.scheduler.SchedulerDataSize;
 import at.uibk.dps.sc.core.scheduler.SchedulerRandom;
 import at.uibk.dps.sc.core.scheduler.SchedulerSingleOption;
 
@@ -33,7 +34,11 @@ public class SchedulerModule extends EeModule {
     /**
      * Random scheduling
      */
-    Random
+    Random,
+    /**
+     * Size threshold (should actually be a transmission option)
+     */
+    SizeConstraint
   }
 
   @Order(1)
@@ -43,8 +48,14 @@ public class SchedulerModule extends EeModule {
   @Order(2)
   @Info("The number of mappings to pick for each user task.")
   @Constant(namespace = SchedulerRandom.class, value = "mappingsToPick")
-  @Required(property = "schedulingMode", elements = "Random")
+  @Required(property = "schedulingMode", elements = {"Random", "SizeConstraint"})
   public int mappingsToPick = 1;
+  
+  @Order(3)
+  @Info("Threshold in KB. Anything with an input with a larger size will be processed locally")
+  @Constant(namespace = SchedulerDataSize.class, value = "sizeThreshold")
+  @Required(property = "schedulingMode", elements = "SizeConstraint")
+  public int sizeThresholdKb = 10;
 
   @Override
   protected void config() {
@@ -53,6 +64,8 @@ public class SchedulerModule extends EeModule {
       bind(Scheduler.class).to(SchedulerSingleOption.class);
     } else if (schedulingMode.equals(SchedulingMode.Random)) {
       bind(Scheduler.class).to(SchedulerRandom.class);
+    } else if (schedulingMode.equals(SchedulingMode.SizeConstraint)) {
+      bind(Scheduler.class).to(SchedulerDataSize.class);
     }
   }
 
@@ -70,5 +83,13 @@ public class SchedulerModule extends EeModule {
 
   public void setMappingsToPick(final int mappingsToPick) {
     this.mappingsToPick = mappingsToPick;
+  }
+
+  public int getSizeThresholdKb() {
+    return sizeThresholdKb;
+  }
+
+  public void setSizeThresholdKb(int sizeThresholdKb) {
+    this.sizeThresholdKb = sizeThresholdKb;
   }
 }

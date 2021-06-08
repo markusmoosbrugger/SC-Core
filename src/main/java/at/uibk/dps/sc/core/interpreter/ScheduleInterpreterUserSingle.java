@@ -4,6 +4,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.demo.FunctionFactoryDemo;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
@@ -27,8 +28,8 @@ public class ScheduleInterpreterUserSingle extends ScheduleInterpreterUser {
    */
   @Inject
   public ScheduleInterpreterUserSingle(final FunctionFactoryLocal localFunctionFactory,
-      final FunctionFactoryServerless functionFactorySl) {
-    super(localFunctionFactory, functionFactorySl);
+      final FunctionFactoryServerless functionFactorySl, final FunctionFactoryDemo factoryDemo) {
+    super(localFunctionFactory, functionFactorySl, factoryDemo);
   }
 
   @Override

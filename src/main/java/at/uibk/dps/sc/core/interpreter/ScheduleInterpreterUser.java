@@ -4,6 +4,7 @@ import java.util.Set;
 
 import at.uibk.dps.ee.core.enactable.EnactmentFunction;
 import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.demo.FunctionFactoryDemo;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceMapping;
 import at.uibk.dps.ee.model.properties.PropertyServiceMapping.EnactmentMode;
@@ -21,17 +22,23 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
 
   protected final FunctionFactoryLocal functionFactoryLocal;
   protected final FunctionFactoryServerless functionFactorySl;
+  protected final FunctionFactoryDemo functionFactoryDemo;
 
   /**
    * Default constructor.
    * 
    * @param functionFactoryLocal the factory for the creation of
    *        {@link EnactmentFunction}s performing local calculation
+   * @param functionFactoryDemo the factory for the creation of demo functions
+   *        implemented natively
+   * @param functionFactorySl the factory for the creation of serverless functions
    */
   public ScheduleInterpreterUser(final FunctionFactoryLocal functionFactoryLocal,
-      final FunctionFactoryServerless functionFactorySl) {
+      final FunctionFactoryServerless functionFactorySl,
+      final FunctionFactoryDemo functionFactoryDemo) {
     this.functionFactoryLocal = functionFactoryLocal;
     this.functionFactorySl = functionFactorySl;
+    this.functionFactoryDemo = functionFactoryDemo;
   }
 
   @Override
@@ -66,6 +73,8 @@ public abstract class ScheduleInterpreterUser implements ScheduleInterpreter {
       return interpretLocal(mapping);
     } else if (resType.equals(EnactmentMode.Serverless)) {
       return interpretServerless(mapping);
+    } else if (resType.equals(EnactmentMode.Demo)) {
+      return functionFactoryDemo.getLocalFunction(mapping);
     } else {
       throw new IllegalArgumentException("Unknown resource type " + resType.name());
     }

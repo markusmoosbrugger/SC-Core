@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import at.uibk.dps.ee.enactables.local.container.ContainerFunction;
 import at.uibk.dps.ee.enactables.local.container.FunctionFactoryLocal;
+import at.uibk.dps.ee.enactables.local.demo.FunctionFactoryDemo;
 import at.uibk.dps.ee.enactables.serverless.FunctionFactoryServerless;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
@@ -31,9 +32,10 @@ public class ScheduleInterpreterUserSingleTest {
     ContainerFunction functionMockLockal = mock(ContainerFunction.class);
     FunctionFactoryLocal factoryMock = mock(FunctionFactoryLocal.class);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
+    FunctionFactoryDemo mockDemo = mock(FunctionFactoryDemo.class);
     when(factoryMock.getContainerFunction(localMapping)).thenReturn(functionMockLockal);
     ScheduleInterpreterUserSingle tested =
-        new ScheduleInterpreterUserSingle(factoryMock, mockFacSl);
+        new ScheduleInterpreterUserSingle(factoryMock, mockFacSl, mockDemo);
     assertEquals(functionMockLockal, tested.interpretSchedule(task, localSchedule));
   }
 
@@ -41,8 +43,9 @@ public class ScheduleInterpreterUserSingleTest {
   public void testCheckSchedule() {
     FunctionFactoryLocal mockFactory = mock(FunctionFactoryLocal.class);
     FunctionFactoryServerless mockFacSl = mock(FunctionFactoryServerless.class);
+    FunctionFactoryDemo mockDemo = mock(FunctionFactoryDemo.class);
     ScheduleInterpreterUserSingle tested =
-        new ScheduleInterpreterUserSingle(mockFactory, mockFacSl);
+        new ScheduleInterpreterUserSingle(mockFactory, mockFacSl, mockDemo);
     Task task = new Task("task");
     Resource res = new Resource("res");
     Resource res2 = new Resource("res2");
