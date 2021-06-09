@@ -89,7 +89,7 @@ public class SchedulerModule extends EeModule {
     return sizeThresholdKb;
   }
 
-  public void setSizeThresholdKb(int sizeThresholdKb) {
+  public void setSizeThresholdKb(final int sizeThresholdKb) {
     this.sizeThresholdKb = sizeThresholdKb;
   }
 }

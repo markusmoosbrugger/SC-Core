@@ -25,17 +25,27 @@ public class SchedulerDataSize extends SchedulerRandom {
 
   protected final int sizeThresholdKb;
 
+  /**
+   * Injection constructor
+   * 
+   * @param specProvider see parent
+   * @param random see parent
+   * @param mappingsToPick see parent
+   * @param sizeThreshold the data size threshold for local execution
+   */
   @Inject
-  public SchedulerDataSize(SpecificationProvider specProvider, Random random,
-      @Constant(namespace = SchedulerRandom.class, value = "mappingsToPick") int mappingsToPick,
-      @Constant(namespace = SchedulerDataSize.class, value = "sizeThreshold") int sizeThreshold) {
+  public SchedulerDataSize(final SpecificationProvider specProvider, final Random random,
+      @Constant(namespace = SchedulerRandom.class,
+          value = "mappingsToPick") final int mappingsToPick,
+      @Constant(namespace = SchedulerDataSize.class,
+          value = "sizeThreshold") final int sizeThreshold) {
     super(specProvider, random, mappingsToPick);
     this.sizeThresholdKb = sizeThreshold;
   }
 
   @Override
-  protected Set<Mapping<Task, Resource>> chooseMappingSubset(Task task,
-      Set<Mapping<Task, Resource>> mappingOptions) {
+  protected Set<Mapping<Task, Resource>> chooseMappingSubset(final Task task,
+      final Set<Mapping<Task, Resource>> mappingOptions) {
     return super.chooseMappingSubset(task, mappingOptions.stream()
         .filter(mapping -> !excludeMapping(mapping, task)).collect(Collectors.toSet()));
   }
@@ -48,13 +58,13 @@ public class SchedulerDataSize extends SchedulerRandom {
    * @return true iff the task in the given mapping has a data input smaller than
    *         the defined threshold
    */
-  protected boolean excludeMapping(Mapping<Task, Resource> mapping, Task process) {
-    JsonObject input = PropertyServiceFunction.getEnactable(process).getInput();
-    int byteSize = input.toString().getBytes().length;
-    boolean overThreshold = byteSize > (sizeThresholdKb * 1000);
-    boolean overAndServerless = overThreshold
+  protected boolean excludeMapping(final Mapping<Task, Resource> mapping, final Task process) {
+    final JsonObject input = PropertyServiceFunction.getEnactable(process).getInput();
+    final int byteSize = input.toString().getBytes().length;
+    final boolean overThreshold = byteSize > (sizeThresholdKb * 1000);
+    final boolean overAndServerless = overThreshold
         && PropertyServiceMapping.getEnactmentMode(mapping).equals(EnactmentMode.Serverless);
-    boolean underAndLocal = !overThreshold
+    final boolean underAndLocal = !overThreshold
         && PropertyServiceMapping.getEnactmentMode(mapping).equals(EnactmentMode.Local);
     return overAndServerless || underAndLocal;
   }
