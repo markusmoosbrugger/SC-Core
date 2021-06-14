@@ -1,5 +1,6 @@
 package at.uibk.dps.sc.core.modules;
 
+import at.uibk.dps.sc.core.scheduler.*;
 import org.opt4j.core.config.annotations.Info;
 import org.opt4j.core.config.annotations.Order;
 import org.opt4j.core.config.annotations.Required;
@@ -7,10 +8,6 @@ import org.opt4j.core.start.Constant;
 import at.uibk.dps.ee.guice.modules.EeModule;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUser;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUserSingle;
-import at.uibk.dps.sc.core.scheduler.Scheduler;
-import at.uibk.dps.sc.core.scheduler.SchedulerDataSize;
-import at.uibk.dps.sc.core.scheduler.SchedulerRandom;
-import at.uibk.dps.sc.core.scheduler.SchedulerSingleOption;
 
 /**
  * The {@link SchedulerModule} configures the binding of the scheduling-related
@@ -38,7 +35,9 @@ public class SchedulerModule extends EeModule {
     /**
      * Size threshold (should actually be a transmission option)
      */
-    SizeConstraint
+    SizeConstraint,
+
+    RL,
   }
 
   @Order(1)
@@ -66,6 +65,8 @@ public class SchedulerModule extends EeModule {
       bind(Scheduler.class).to(SchedulerRandom.class);
     } else if (schedulingMode.equals(SchedulingMode.SizeConstraint)) {
       bind(Scheduler.class).to(SchedulerDataSize.class);
+    } else if (schedulingMode.equals(SchedulingMode.RL)) {
+      bind(Scheduler.class).to(SchedulerRL.class);
     }
   }
 
