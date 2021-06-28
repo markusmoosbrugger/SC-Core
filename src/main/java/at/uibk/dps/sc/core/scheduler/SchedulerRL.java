@@ -68,7 +68,6 @@ public class SchedulerRL extends SchedulerAbstract {
   }
 
   private void initRLModels(Mappings<Task, Resource> mappings) {
-    Set<Mapping<Task, Resource>> mappingOptions = mappings.getAll();
     for (Mapping<Task, Resource> mapping : mappings) {
       Task task = mapping.getSource();
       String typeID = task.getAttribute("TypeID");

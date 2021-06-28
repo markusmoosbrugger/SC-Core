@@ -14,7 +14,8 @@ import org.opt4j.core.start.Constant;
 
 
 /**
- * The {@link SchedulerModule} configures the binding of the scheduling-related interfaces.
+ * The {@link SchedulerModule} configures the binding of the scheduling-related
+ * interfaces.
  *
  * @author Fedor Smirnov
  */
@@ -79,10 +80,11 @@ public class SchedulerModule extends FunctionModule {
       bind(Scheduler.class).to(SchedulerDataSize.class);
     } else if (schedulingMode.equals(SchedulingMode.RL)) {
       bind(Scheduler.class).to(SchedulerRL.class);
+      // add the function wrapper if the RL scheduler is used
+      addFunctionDecoratorFactory(DecoratorEnactmentModelUpdateFactory.class);
     }
 
-    // add the function wrapper
-    addFunctionDecoratorFactory(DecoratorEnactmentModelUpdateFactory.class);
+
   }
 
   public SchedulingMode getSchedulingMode() {
