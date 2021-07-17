@@ -11,7 +11,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * The {@link DecoratorEnactmentModelUpdate}
+ * The {@link DecoratorEnactmentModelUpdate} sends a request to Pythia-ML after
+ * every enactment in order to update to RL model.
  *
  * @author Markus Moosbrugger
  */
@@ -42,13 +43,11 @@ public class DecoratorEnactmentModelUpdate extends EnactmentFunctionDecorator {
   protected JsonObject postprocess(final JsonObject result) {
     final Instant now = Instant.now();
     final long executionTime = Duration.between(start, now).toMillis();
-    System.out.println("Update model with execution time: " + executionTime);
     updateModel(executionTime);
-    // TODO only save model at the end of workflow
-    saveModel();
     return result;
   }
 
+  // TODO check if needed
   private void saveModel() {
     JsonObject input = new JsonObject();
     input.add("task", new JsonPrimitive(decoratedFunction.getTypeId()));
@@ -56,6 +55,11 @@ public class DecoratorEnactmentModelUpdate extends EnactmentFunctionDecorator {
   }
 
 
+  /**
+   * Updates the RL model of Pythia-ML.
+   *
+   * @param executionTime
+   */
   private void updateModel(long executionTime) {
     JsonObject input = new JsonObject();
     input.add("task", new JsonPrimitive(decoratedFunction.getTypeId()));

@@ -1,8 +1,8 @@
 package at.uibk.dps.sc.core.modules;
 
-import at.uibk.dps.ee.guice.modules.EeModule;
 import at.uibk.dps.ee.guice.modules.FunctionModule;
 import at.uibk.dps.sc.core.decorators.DecoratorEnactmentModelUpdateFactory;
+import at.uibk.dps.sc.core.decorators.EnactmentModelWriter;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUser;
 import at.uibk.dps.sc.core.interpreter.ScheduleInterpreterUserSingle;
 import at.uibk.dps.sc.core.scheduler.*;
@@ -82,6 +82,9 @@ public class SchedulerModule extends FunctionModule {
       bind(Scheduler.class).to(SchedulerRL.class);
       // add the function wrapper if the RL scheduler is used
       addFunctionDecoratorFactory(DecoratorEnactmentModelUpdateFactory.class);
+      // add the workflow wrapper if the RL scheduler is used
+      addEnactmentStateListener(EnactmentModelWriter.class);
+
     }
 
 
