@@ -43,6 +43,11 @@ public class SchedulerRL extends SchedulerAbstract {
     Set<String> possibleResources = taskResourceMappings.get(typeID);
     // check if correct model has been initialized
     for (Mapping<Task, Resource> mappingOption : mappingOptions) {
+      // use parent task if it exists
+      if (task.getParent() != null) {
+        task = (Task) task.getParent();
+      }
+
       if (mappingOption.getSource().equals(task) && possibleResources.contains(
           mappingOption.getTarget().getId())) {
         continue;
@@ -51,9 +56,11 @@ public class SchedulerRL extends SchedulerAbstract {
             "Model for these mappings was not initialized previously. ");
       }
     }
-    String chosenResource = getResourceForTask(typeID);
+
+    final String chosenResource = getResourceForTask(typeID);
+    final Task finalTask = task;
     Set<Mapping<Task, Resource>> result = mappingOptions.stream().filter(
-            map -> map.getSource().equals(task) && map.getTarget().getId().equals(chosenResource))
+            map -> map.getSource().equals(finalTask) && map.getTarget().getId().equals(chosenResource))
         .collect(Collectors.toSet());
     return result;
   }
