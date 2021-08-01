@@ -39,15 +39,15 @@ public class SchedulerRL extends SchedulerAbstract {
   @Override
   protected Set<Mapping<Task, Resource>> chooseMappingSubset(Task task,
       Set<Mapping<Task, Resource>> mappingOptions) {
-    String typeID = task.getAttribute("TypeID");
-    Set<String> possibleResources = taskResourceMappings.get(typeID);
+    String typeId = task.getAttribute("TypeID");
+    Set<String> possibleResources = taskResourceMappings.get(typeId);
     // check if correct model has been initialized
     for (Mapping<Task, Resource> mappingOption : mappingOptions) {
       // use parent task if it exists
       if (task.getParent() != null) {
         task = (Task) task.getParent();
       }
-
+      // TODO use typeID instead of task/parent task
       if (mappingOption.getSource().equals(task) && possibleResources.contains(
           mappingOption.getTarget().getId())) {
         continue;
@@ -56,8 +56,7 @@ public class SchedulerRL extends SchedulerAbstract {
             "Model for these mappings was not initialized previously. ");
       }
     }
-
-    final String chosenResource = getResourceForTask(typeID);
+    final String chosenResource = getResourceForTask(typeId, task.getId());
     final Task finalTask = task;
     Set<Mapping<Task, Resource>> result = mappingOptions.stream().filter(
             map -> map.getSource().equals(finalTask) && map.getTarget().getId().equals(chosenResource))
@@ -65,9 +64,10 @@ public class SchedulerRL extends SchedulerAbstract {
     return result;
   }
 
-  private String getResourceForTask(String typeID) {
+  private String getResourceForTask(String typeId, String taskId) {
     JsonObject input = new JsonObject();
-    input.add("task", new JsonPrimitive(typeID));
+    input.add("typeId", new JsonPrimitive(typeId));
+    input.add("taskId", new JsonPrimitive(taskId));
     JsonObject result = RequestHelper.sendRequest(client, ServerBaseUrl, input, "get_resource");
     String implementationID = result.get("implementation_id").getAsString();
 
@@ -77,9 +77,9 @@ public class SchedulerRL extends SchedulerAbstract {
   private void initRLModels(Mappings<Task, Resource> mappings) {
     for (Mapping<Task, Resource> mapping : mappings) {
       Task task = mapping.getSource();
-      String typeID = task.getAttribute("TypeID");
+      String typeId = task.getAttribute("TypeID");
       Resource resource = mapping.getTarget();
-      taskResourceMappings.computeIfAbsent(typeID, k -> new HashSet<>()).add(resource.getId());
+      taskResourceMappings.computeIfAbsent(typeId, k -> new HashSet<>()).add(resource.getId());
     }
 
     taskResourceMappings.forEach((key, value) -> {
