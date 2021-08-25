@@ -19,8 +19,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SchedulerRL extends SchedulerAbstract {
-  protected Map<String, Set<String>> taskResourceMappings;
+  protected Map<String, Set<String>> typeResourceMappings;
   protected final OkHttpClient client;
+
+  // TODO where to store the constant for the server URL
   protected static final String ServerBaseUrl = "http://localhost:5000/";
 
   /**
@@ -31,7 +33,7 @@ public class SchedulerRL extends SchedulerAbstract {
   @Inject
   public SchedulerRL(final SpecificationProvider specProvider) {
     super(specProvider);
-    this.taskResourceMappings = new HashMap<>();
+    this.typeResourceMappings = new HashMap<>();
     this.client = RequestHelper.initHttpClient();
     this.initRLModels(specProvider.getMappings());
   }
@@ -40,15 +42,10 @@ public class SchedulerRL extends SchedulerAbstract {
   protected Set<Mapping<Task, Resource>> chooseMappingSubset(Task task,
       Set<Mapping<Task, Resource>> mappingOptions) {
     String typeId = task.getAttribute("TypeID");
-    Set<String> possibleResources = taskResourceMappings.get(typeId);
-    // check if correct model has been initialized
+    Set<String> possibleResources = typeResourceMappings.get(typeId);
+
     for (Mapping<Task, Resource> mappingOption : mappingOptions) {
-      // use parent task if it exists
-      if (task.getParent() != null) {
-        task = (Task) task.getParent();
-      }
-      // TODO use typeID instead of task/parent task
-      if (mappingOption.getSource().equals(task) && possibleResources.contains(
+      if (mappingOption.getSource().equals(typeId) && possibleResources.contains(
           mappingOption.getTarget().getId())) {
         continue;
       } else {
@@ -57,9 +54,8 @@ public class SchedulerRL extends SchedulerAbstract {
       }
     }
     final String chosenResource = getResourceForTask(typeId, task.getId());
-    final Task finalTask = task;
     Set<Mapping<Task, Resource>> result = mappingOptions.stream().filter(
-            map -> map.getSource().equals(finalTask) && map.getTarget().getId().equals(chosenResource))
+            map -> map.getSource().equals(typeId) && map.getTarget().getId().equals(chosenResource))
         .collect(Collectors.toSet());
     return result;
   }
@@ -79,19 +75,19 @@ public class SchedulerRL extends SchedulerAbstract {
       Task task = mapping.getSource();
       String typeId = task.getAttribute("TypeID");
       Resource resource = mapping.getTarget();
-      taskResourceMappings.computeIfAbsent(typeId, k -> new HashSet<>()).add(resource.getId());
+      typeResourceMappings.computeIfAbsent(typeId, k -> new HashSet<>()).add(resource.getId());
     }
 
-    taskResourceMappings.forEach((key, value) -> {
+    typeResourceMappings.forEach((key, value) -> {
       initSingleRLModel(key, value);
     });
 
     return;
   }
 
-  private void initSingleRLModel(String task, Set<String> resources) {
+  private void initSingleRLModel(String typeId, Set<String> resources) {
     JsonObject input = new JsonObject();
-    input.add("task", new JsonPrimitive(task));
+    input.add("typeId", new JsonPrimitive(typeId));
     JsonArray resourcesJson = new JsonArray();
     resources.forEach((r) -> resourcesJson.add(r));
     input.add("resources", resourcesJson);
