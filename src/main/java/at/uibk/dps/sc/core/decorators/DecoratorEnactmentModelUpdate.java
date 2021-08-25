@@ -48,13 +48,6 @@ public class DecoratorEnactmentModelUpdate extends EnactmentFunctionDecorator {
     return result;
   }
 
-  // TODO check if needed
-  private void saveModel() {
-    JsonObject input = new JsonObject();
-    input.add("task", new JsonPrimitive(decoratedFunction.getTypeId()));
-    RequestHelper.sendRequest(client, ServerBaseUrl, input, "save_model");
-  }
-
 
   /**
    * Updates the RL model of Pythia-ML.
