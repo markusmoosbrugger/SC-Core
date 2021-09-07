@@ -44,15 +44,14 @@ public class SchedulerRL extends SchedulerAbstract {
     String typeId = task.getAttribute("TypeID");
     Set<String> possibleResources = typeResourceMappings.get(typeId);
     // check if correct model has been initialized
-    Task parentTask = null;
+    final Task parentTask;
+    if (task.getParent() != null) {
+      parentTask = (Task) task.getParent();
+    } else {
+      parentTask = task;
+    }
     for (Mapping<Task, Resource> mappingOption : mappingOptions) {
       // use parent task if it exists
-      if (task.getParent() != null) {
-        parentTask = (Task) task.getParent();
-      }
-      else{
-        parentTask = task;
-      }
       if (mappingOption.getSource().equals(parentTask) && possibleResources.contains(
           mappingOption.getTarget().getId())) {
         continue;
@@ -62,9 +61,8 @@ public class SchedulerRL extends SchedulerAbstract {
       }
     }
     final String chosenResource = getResourceForTask(typeId, task.getId());
-    Task finalParentTask = parentTask;
     Set<Mapping<Task, Resource>> result = mappingOptions.stream().filter(
-            map -> map.getSource().equals(finalParentTask) && map.getTarget().getId().equals(chosenResource))
+            map -> map.getSource().equals(parentTask) && map.getTarget().getId().equals(chosenResource))
         .collect(Collectors.toSet());
     return result;
   }
