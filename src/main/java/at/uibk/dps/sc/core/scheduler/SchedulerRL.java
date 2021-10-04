@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 public class SchedulerRL extends SchedulerAbstract {
   protected Map<String, Set<String>> typeResourceMappings;
   protected final OkHttpClient client;
-
-  // TODO where to store the constant for the server URL
   protected static final String ServerBaseUrl = "http://localhost:5000/";
 
   /**
@@ -60,18 +58,19 @@ public class SchedulerRL extends SchedulerAbstract {
             "Model for these mappings was not initialized previously. ");
       }
     }
-    final String chosenResource = getResourceForTask(typeId, task.getId());
+    final String chosenImplementation = getImplementationForTask(typeId, task.getId());
     Set<Mapping<Task, Resource>> result = mappingOptions.stream().filter(
-            map -> map.getSource().equals(parentTask) && map.getTarget().getId().equals(chosenResource))
-        .collect(Collectors.toSet());
+        map -> map.getSource().equals(parentTask) && map.getTarget().getId()
+            .equals(chosenImplementation)).collect(Collectors.toSet());
     return result;
   }
 
-  private String getResourceForTask(String typeId, String taskId) {
+  private String getImplementationForTask(String typeId, String taskId) {
     JsonObject input = new JsonObject();
-    input.add("typeId", new JsonPrimitive(typeId));
-    input.add("taskId", new JsonPrimitive(taskId));
-    JsonObject result = RequestHelper.sendRequest(client, ServerBaseUrl, input, "get_resource");
+    input.add("type_id", new JsonPrimitive(typeId));
+    input.add("task_id", new JsonPrimitive(taskId));
+    JsonObject result =
+        RequestHelper.sendRequest(client, ServerBaseUrl, input, "get_implementation");
     String implementationID = result.get("implementation_id").getAsString();
 
     return implementationID;
@@ -92,12 +91,12 @@ public class SchedulerRL extends SchedulerAbstract {
     return;
   }
 
-  private void initSingleRLModel(String typeId, Set<String> resources) {
+  private void initSingleRLModel(String typeId, Set<String> implementations) {
     JsonObject input = new JsonObject();
-    input.add("typeId", new JsonPrimitive(typeId));
-    JsonArray resourcesJson = new JsonArray();
-    resources.forEach((r) -> resourcesJson.add(r));
-    input.add("resources", resourcesJson);
+    input.add("type_id", new JsonPrimitive(typeId));
+    JsonArray implementationsJson = new JsonArray();
+    implementations.forEach((r) -> implementationsJson.add(r));
+    input.add("implementations", implementationsJson);
     RequestHelper.sendRequest(client, ServerBaseUrl, input, "init_model");
   }
 

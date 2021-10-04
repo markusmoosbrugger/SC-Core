@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient;
 public class EnactmentModelWriter implements EnactmentStateListener {
 
   protected final OkHttpClient client;
-  // TODO where should we specify the ServerBaseUrl
   protected static final String ServerBaseUrl = "http://localhost:5000/";
 
 

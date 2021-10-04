@@ -12,8 +12,8 @@ import java.time.Instant;
 import java.util.AbstractMap;
 
 /**
- * The {@link DecoratorEnactmentModelUpdate} sends a request to Pythia-ML after every enactment in
- * order to update to RL model.
+ * The {@link DecoratorEnactmentModelUpdate} sends a request to Pythia-ML after
+ * every enactment in order to update the RL model.
  *
  * @author Markus Moosbrugger
  */
@@ -57,14 +57,14 @@ public class DecoratorEnactmentModelUpdate extends EnactmentFunctionDecorator {
   private void updateModel(long executionTime) {
     JsonObject input = new JsonObject();
 
-    input.add("typeId", new JsonPrimitive(decoratedFunction.getTypeId()));
+    input.add("type_id", new JsonPrimitive(decoratedFunction.getTypeId()));
     for (AbstractMap.SimpleEntry entry : decoratedFunction.getAdditionalAttributes()) {
       if (entry.getKey().equals("taskId")) {
-        input.add("taskId", new JsonPrimitive((String) entry.getValue()));
+        input.add("task_id", new JsonPrimitive((String) entry.getValue()));
       }
     }
-    input.add("executionTime", new JsonPrimitive(executionTime));
-    input.add("resource", new JsonPrimitive(decoratedFunction.getImplementationId()));
+    input.add("execution_time", new JsonPrimitive(executionTime));
+    input.add("implementation_id", new JsonPrimitive(decoratedFunction.getImplementationId()));
     input.add("timestamp", new JsonPrimitive(Instant.now().toEpochMilli()));
     RequestHelper.sendRequest(client, ServerBaseUrl, input, "update");
   }
